@@ -1,5 +1,5 @@
 # 89FROG
-A protocol encouraging group engagement through secret sharing using algorithms 
+A protocol encouraging group engagement through secret sharing using Shamir's Secret Sharing algorithm. 
 ## 🐸 89FROG: The Lily Pad Sanctuary
 
 **"A secret is not a burden to be carried alone, but a treasure to be discovered together."**
