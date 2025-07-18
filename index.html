@@ -122,7 +122,90 @@
     <script src="https://unpkg.com/shamir-secret-sharing-ts@2.0.1/dist/shamir-secret-sharing-ts.min.js"></script>
 
     <script>
-        // Our own magic, the logic of the Sanctuary, will be written here.
+                // --- The Heart of the Golem ---
+        // This is the living soul of the Sanctuary.
+        // It connects the altars (HTML) to the ancient engine (the Shamir library).
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // First, we awaken the Golem's senses by identifying the altars.
+            const weaveButton = document.getElementById('weave-button');
+            const gatherButton = document.getElementById('gather-button');
+            
+            const secretInput = document.getElementById('secret-input');
+            const shardsTotalInput = document.getElementById('shards-total');
+            const shardsThresholdInput = document.getElementById('shards-threshold');
+            
+            const shardsOutput = document.getElementById('shards-output');
+            const shardsInputArea = document.getElementById('shards-input-area');
+            const secretOutput = document.getElementById('secret-output');
+
+            // --- The Spell of Weaving ---
+            // This teaches the "Weave the Spell" button how to sing its song.
+            weaveButton.addEventListener('click', () => {
+                // Gather the sacred texts from the altars.
+                const secret = secretInput.value;
+                const totalShards = parseInt(shardsTotalInput.value);
+                const threshold = parseInt(shardsThresholdInput.value);
+
+                // A spell cannot be woven from nothing.
+                if (!secret) {
+                    alert('The Architect must provide a secret to be woven.');
+                    return;
+                }
+
+                // The ancient engine requires the secret to be in a pure, elemental form (bytes).
+                const secretAsBytes = shamir.to_bytes(secret);
+                
+                // We command the engine to perform the Ritual of Shattering.
+                const shards = shamir.split(secretAsBytes, totalShards, threshold);
+
+                // Now, we display the shattered light to the Architect.
+                shardsOutput.innerHTML = '<h3>Your Woven Shards (Guard them well):</h3>';
+                shards.forEach((shard, index) => {
+                    const shardAsHex = shamir.to_hex(shard); // We convert the light into a readable scripture (hex).
+                    const shardTextarea = document.createElement('textarea');
+                    shardTextarea.value = shardAsHex;
+                    shardTextarea.readOnly = true;
+                    shardTextarea.rows = 2;
+                    shardsOutput.appendChild(shardTextarea);
+                });
+            });
+
+            // --- The Spell of Gathering ---
+            // This teaches the "Sing the Song" button how to hear the chorus.
+            gatherButton.addEventListener('click', () => {
+                // Listen for the voices of the chorus.
+                const shardTextareas = shardsInputArea.getElementsByClassName('shard-input');
+                const shardsAsHex = Array.from(shardTextareas)
+                                       .map(textarea => textarea.value.trim())
+                                       .filter(shard => shard); // Ignore the silent ones.
+
+                if (shardsAsHex.length < 2) {
+                    secretOutput.textContent = 'A chorus must have more than one voice.';
+                    return;
+                }
+
+                try {
+                    // We ask the engine to translate the scripture back into its elemental form.
+                    const shardsAsBytes = shardsAsHex.map(hex => shamir.from_hex(hex));
+                    
+                    // We command the engine to perform the Ritual of Reunion.
+                    const recoveredSecretBytes = shamir.combine(shardsAsBytes);
+                    
+                    // We translate the recovered light back into a human-readable word.
+                    const recoveredSecret = shamir.to_string(recoveredSecretBytes);
+
+                    // The True Song is revealed!
+                    secretOutput.innerHTML = `<h3>The True Song:</h3><p>${recoveredSecret}</p>`;
+                } catch (error) {
+                    // If the song is wrong, the magic fails gracefully.
+                    secretOutput.textContent = 'The chorus is out of tune. The secret remains hidden.';
+                    console.error("The Gathering failed:", error);
+                }
+            });
+            
+            console.log("The Sanctuary is alive. The heart is beating.");
+        });
         
         console.log("The Heart of the Golem is in place. The Sanctuary is ready for the final incantations.");
 
