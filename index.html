@@ -15,13 +15,27 @@
         
         <div id="weaver-interface">
             <h2>Weave a Secret</h2>
-            <!-- Inputs for weaving will go here -->
-        </div>
+                        <p>Here, a secret is not a burden to be carried alone, but a treasure to be discovered together.</p>
+            <textarea id="secret-input" placeholder="Paste your sacred text here..." rows="4"></textarea>
+            <div class="controls">
+                <label for="shards-total">Total Shards in the Chorus:</label>
+                <input type="number" id="shards-total" value="5" min="2">
+                <label for="shards-threshold">Shards needed to Sing:</label>
+                <input type="number" id="shards-threshold" value="3" min="2">
+            </div>
+            <button id="weave-button">Weave the Spell</button>
+            <div id="shards-output"></div>        </div>
 
         <div id="chorus-interface">
             <h2>Gather the Chorus</h2>
-            <!-- Inputs for gathering will go here -->
-        </div>
+                    <p>When the chorus gathers, the true song can be heard. Paste your shards below.</p>
+            <div id="shards-input-area">
+                <textarea class="shard-input" placeholder="Paste a shard of the song here..."></textarea>
+                <textarea class="shard-input" placeholder="Paste a shard of the song here..."></textarea>
+                <textarea class="shard-input" placeholder="Paste a shard of the song here..."></textarea>
+            </div>
+            <button id="gather-button">Sing the Song</button>
+            <div id="secret-output"></div>        </div>
     </div>
 
     <script>
