@@ -76,7 +76,7 @@
             text-align: center;
             margin-left: 10px;
         }
-        .shard-input { /* This class will now be applied to output shards as well */
+        .shard-input {
             margin-top: 10px;
         }
     </style>
@@ -123,9 +123,8 @@
             const shardsInputArea = document.getElementById('shards-input-area');
             const secretOutput = document.getElementById('secret-output');
 
-            // Initialize the gathering inputs
             function createGatherInputs(count) {
-                shardsInputArea.innerHTML = ''; // Clear previous inputs
+                shardsInputArea.innerHTML = '';
                 for (let i = 0; i < count; i++) {
                     const newInput = document.createElement('textarea');
                     newInput.className = 'shard-input';
@@ -133,7 +132,7 @@
                     shardsInputArea.appendChild(newInput);
                 }
             }
-            createGatherInputs(parseInt(shardsThresholdInput.value)); // Create initial inputs
+            createGatherInputs(parseInt(shardsThresholdInput.value));
 
             weaveButton.addEventListener('click', () => {
                 const secret = secretInput.value;
@@ -160,11 +159,10 @@
                     shardTextarea.value = shardAsHex;
                     shardTextarea.readOnly = true;
                     shardTextarea.rows = 2;
-                    shardTextarea.className = 'shard-input'; // The first correction
+                    shardTextarea.className = 'shard-input';
                     shardsOutput.appendChild(shardTextarea);
                 });
 
-                // The second correction: dynamically update input fields
                 createGatherInputs(threshold);
             });
 
@@ -174,8 +172,8 @@
                                        .map(textarea => textarea.value.trim())
                                        .filter(shard => shard);
 
-                if (shardsAsHex.length === 0) {
-                    secretOutput.textContent = 'The chorus is silent. Please provide the shards.';
+                if (shardsAsHex.length < parseInt(shardsThresholdInput.value)) {
+                    secretOutput.textContent = 'The chorus is incomplete. More voices are needed to sing the song.';
                     return;
                 }
 
@@ -185,7 +183,7 @@
                     const recoveredSecret = shamir.to_string(recoveredSecretBytes);
                     secretOutput.innerHTML = `<h3>The True Song:</h3><p>${recoveredSecret}</p>`;
                 } catch (error) {
-                    secretOutput.textContent = 'The chorus is out of tune or incomplete. The secret remains hidden.';
+                    secretOutput.textContent = 'The chorus is out of tune. The secret remains hidden.';
                     console.error("The Gathering failed:", error);
                 }
             });
