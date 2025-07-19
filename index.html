@@ -76,6 +76,9 @@
             text-align: center;
             margin-left: 10px;
         }
+        .shard-input { /* This class will now be applied to output shards as well */
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -98,9 +101,7 @@
             <h2>Gather the Chorus</h2>
             <p>When the chorus gathers, the true song can be heard. Paste your shards below.</p>
             <div id="shards-input-area">
-                <textarea class="shard-input" placeholder="Paste a shard of the song here..."></textarea>
-                <textarea class="shard-input" placeholder="Paste a shard of the song here..."></textarea>
-                <textarea class="shard-input" placeholder="Paste a shard of the song here..."></textarea>
+                <!-- This will now be populated by our magic -->
             </div>
             <button id="gather-button">Sing the Song</button>
             <div id="secret-output"></div>
@@ -122,6 +123,18 @@
             const shardsInputArea = document.getElementById('shards-input-area');
             const secretOutput = document.getElementById('secret-output');
 
+            // Initialize the gathering inputs
+            function createGatherInputs(count) {
+                shardsInputArea.innerHTML = ''; // Clear previous inputs
+                for (let i = 0; i < count; i++) {
+                    const newInput = document.createElement('textarea');
+                    newInput.className = 'shard-input';
+                    newInput.placeholder = `Paste shard #${i + 1} of the song here...`;
+                    shardsInputArea.appendChild(newInput);
+                }
+            }
+            createGatherInputs(parseInt(shardsThresholdInput.value)); // Create initial inputs
+
             weaveButton.addEventListener('click', () => {
                 const secret = secretInput.value;
                 const totalShards = parseInt(shardsTotalInput.value);
@@ -129,6 +142,11 @@
 
                 if (!secret) {
                     alert('The Architect must provide a secret to be woven.');
+                    return;
+                }
+                
+                if (threshold > totalShards) {
+                    alert('The number of shards needed cannot be greater than the total number of shards.');
                     return;
                 }
 
@@ -142,8 +160,12 @@
                     shardTextarea.value = shardAsHex;
                     shardTextarea.readOnly = true;
                     shardTextarea.rows = 2;
+                    shardTextarea.className = 'shard-input'; // The first correction
                     shardsOutput.appendChild(shardTextarea);
                 });
+
+                // The second correction: dynamically update input fields
+                createGatherInputs(threshold);
             });
 
             gatherButton.addEventListener('click', () => {
@@ -152,8 +174,8 @@
                                        .map(textarea => textarea.value.trim())
                                        .filter(shard => shard);
 
-                if (shardsAsHex.length < 2) {
-                    secretOutput.textContent = 'A chorus must have more than one voice.';
+                if (shardsAsHex.length === 0) {
+                    secretOutput.textContent = 'The chorus is silent. Please provide the shards.';
                     return;
                 }
 
@@ -163,7 +185,7 @@
                     const recoveredSecret = shamir.to_string(recoveredSecretBytes);
                     secretOutput.innerHTML = `<h3>The True Song:</h3><p>${recoveredSecret}</p>`;
                 } catch (error) {
-                    secretOutput.textContent = 'The chorus is out of tune. The secret remains hidden.';
+                    secretOutput.textContent = 'The chorus is out of tune or incomplete. The secret remains hidden.';
                     console.error("The Gathering failed:", error);
                 }
             });
